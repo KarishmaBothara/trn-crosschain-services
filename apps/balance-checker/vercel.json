@@ -1,0 +1,43 @@
+{
+    "version": 2,
+    "public": false,
+    "git": {
+        "deploymentEnabled": false
+    },
+    "buildCommand": "yarn workspace @trncs/balance-checker build",
+    "framework": "nextjs",
+    "crons": [
+        {
+            "path": "/api/check-balances/ethereum/goerli/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP",
+            "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/check-balances/ethereum/homestead/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP",
+            "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/check-balances/trn/porcini/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP",
+            "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/check-balances/trn/root/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP",
+            "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/check-balances/xrpl/testnet/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP",
+            "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/check-balances/xrpl/livenet/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP",
+            "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/send-notifications/balances/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP/prod",
+            "schedule": "0 * * * *"
+        },
+        {
+            "path": "/api/send-notifications/errors/LPPe8RYBeKdQyfLrhqN5aYTDqt6fvSEP/prod",
+            "schedule": "0 * * * *"
+        }
+    ]
+}

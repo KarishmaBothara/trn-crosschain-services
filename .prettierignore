@@ -1,0 +1,7 @@
+.next
+.yarn/*
+.data
+lib
+generated
+prisma
+coverage

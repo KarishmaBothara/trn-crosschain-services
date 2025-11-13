@@ -1,0 +1,124 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/prisma"
+  binaryTargets = ["native", "linux-musl"]
+  previewFeatures = ["filterJson"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+// Incoming
+model TxDeposit {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  messageId   Int     @unique
+  messageData String
+  messageFee  String?
+
+  ethHash     String  @unique
+  extrinsicId String?
+
+  from        String
+  to          String?
+  ethValue    TxValue?
+  erc20Value  TxValue?
+  erc721Value Json? // Prisma doesn't support optional list
+
+  auxData   Json?
+  status    TxStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([extrinsicId])
+  @@map("TxDeposits")
+}
+
+// Outgoing
+model TxWithdrawal {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  eventId        Int?
+  eventAuthSetId Int?
+  eventInfo      EventInfo?
+  eventSignature ECDSASignature?
+
+  extrinsicId String  @unique
+  ethHash     String?
+
+  from String?
+  to   String?
+
+  ethValue    TxValue?
+  erc20Value  TxValue?
+  erc721Value Json?
+
+  auxData   Json?
+  status    TxStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([ethHash])
+  @@map("TxWithdrawals")
+}
+
+model TxAuthSetChange {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  eventId        Int            @unique
+  eventAuthSetId Int
+  eventInfo      EventInfo
+  eventSignature ECDSASignature
+
+  eventItemId String     @unique
+  ethHash     String?
+
+  newAuthSetId Int
+
+  auxData   Json?
+  status    TxStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([ethHash])
+  @@map("TxAuthSetChanges")
+}
+
+model ObxAuthSet {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  setId    Int      @unique
+  setValue String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@map("ObxAuthSets")
+}
+
+// Meta
+enum TxStatus {
+  Delayed
+  Pending
+  Processing
+  ProcessingOk
+  ProcessingFailed
+}
+
+type TxValue {
+  amount       String
+  tokenAddress String
+}
+
+type ECDSASignature {
+  r String[]
+  s String[]
+  v Int[]
+}
+
+type EventInfo {
+  source      String
+  destination String
+  message     String
+}

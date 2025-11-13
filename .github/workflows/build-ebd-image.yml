@@ -1,0 +1,106 @@
+name: "Build | EBD Image"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: ["uat-**/ebd", "prod-**/ebd"]
+    paths:
+      [
+        "apps/ebd/**",
+        "packages/**",
+        "package.json",
+        ".github/workflows/build-ebd-image.yml",
+      ]
+
+env:
+  REGISTRY: "ghcr.io"
+  IMAGE_NAME: "ghcr.io/futureversecom/eth-bridge-daemon"
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    outputs:
+      IMAGE_VERSION: ${{ steps.build-publish-step.outputs.version }}
+      ENV_NAME: ${{ steps.build-publish-step.outputs.env_name }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: ghcr.io login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build 🛠 & Publish 🐳
+        id: build-publish-step
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+
+          if [[ "$GITHUB_REF" == *"prod"* ]]; then ENV_NAME="rootnet-au-prod"; fi
+          if [[ "$GITHUB_REF" == *"uat"* ]]; then ENV_NAME="rootnet-au-dev"; fi
+
+          echo "github ref": $GITHUB_REF
+          echo "commit hash: $COMMIT_HASH"
+          echo "branch environment: $ENV_NAME"
+
+          # Set output
+          echo "version=${COMMIT_HASH}" >> $GITHUB_OUTPUT
+          echo "env_name=${ENV_NAME}" >> $GITHUB_OUTPUT
+
+          # skip docker build when image with $COMMIT_HASH tag already exists
+          if [ -n "$(docker images -q "$IMAGE_NAME":"$COMMIT_HASH")" ]; then
+            echo "docker build skipped because image already exists"
+            exit 0
+          fi
+
+          docker build -t "$IMAGE_NAME":"$COMMIT_HASH" -f ./Dockerfile.ebd .
+          docker push "$IMAGE_NAME":"$COMMIT_HASH"
+
+          # branch is dev
+          if [ -n "$ENV_NAME" ]; then
+            docker tag "$IMAGE_NAME":"$COMMIT_HASH" "$IMAGE_NAME":"$ENV_NAME"
+            docker push "$IMAGE_NAME":"$ENV_NAME"
+          fi
+
+          # branch is default branch
+          if [ "$GITHUB_REF" == "refs/heads/main" ]; then
+            docker tag "$IMAGE_NAME":"$COMMIT_HASH" "$IMAGE_NAME":latest
+            docker push "$IMAGE_NAME":latest
+          fi
+
+          # clean up images
+          docker image prune --filter label=stage=build -f
+
+  trigger-flux:
+    runs-on: ubuntu-latest
+    needs: [build-image]
+    if: github.ref != 'refs/heads/main'
+    outputs:
+      PAYLOAD: ${{ steps.generate-payload.outputs.PAYLOAD }}
+    steps:
+      - name: Generate Payload
+        id: generate-payload
+        run: |
+          IMAGE_VERSION=${{ needs.build-image.outputs.IMAGE_VERSION }}
+          ENV_NAME=${{ needs.build-image.outputs.ENV_NAME }}
+          JSON_PAYLOAD=$(jq --null-input \
+          --arg image "$IMAGE_VERSION" \
+          --arg env_name "$ENV_NAME" \
+          '{"project":"fv-seed-ebd","environment":$env_name,"skip_docker_version_overwriting":"false","docker_image_version": $image}')
+          JSON_STRING_PAYLOAD=$(echo $JSON_PAYLOAD | jq -R)
+          echo $JSON_STRING_PAYLOAD
+          echo "PAYLOAD=${JSON_STRING_PAYLOAD}" >> $GITHUB_OUTPUT
+      - name: Trigger flux-app-tenants to create PR
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: futureversecom
+          repo: flux-app-tenants
+          workflow_file_name: main.yaml
+          github_user: ${{ secrets.GH_ACTOR }}
+          github_token: ${{ secrets.GH_PAT }}
+          client_payload: ${{ fromJSON(steps.generate-payload.outputs.PAYLOAD) }}

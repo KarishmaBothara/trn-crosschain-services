@@ -1,0 +1,268 @@
+{
+  "ethereum": {
+    "goerli": {
+      "isMainnet": false,
+      "accounts": [
+        {
+          "alias": "EBD Outbox Relayer",
+          "address": "0xc2eb8FBE2D7B15FEe79d9e5eAf175Cd6E29Bf42B",
+          "tokenThresholds": {
+            "ETH": 0.1
+          }
+        }
+      ],
+      "tokens": {
+        "ETH": {}
+      }
+    },
+    "homestead": {
+      "isMainnet": true,
+      "accounts": [
+        {
+          "alias": "EBD Outbox Relayer",
+          "address": "0xc3f2B11532454530C22D41D5f84cC3c27FDcCc32",
+          "tokenThresholds": {
+            "ETH": 0.1
+          }
+        }
+      ],
+      "tokens": {
+        "ETH": {}
+      }
+    }
+  },
+  "trn": {
+    "porcini": {
+      "isMainnet": false,
+      "accounts": [
+        {
+          "alias": "EBD Inbox Relayer",
+          "address": "0x362855F7C9C5c9D00A84157CDEfE889FeA436741",
+          "tokenThresholds": {
+            "XRP": 100
+          }
+        },
+        {
+          "alias": "XBD Inbox Relayer",
+          "address": "0x25451A4de12dcCc2D166922fA938E900fCc4ED24",
+          "tokenThresholds": {
+            "XRP": 100
+          }
+        },
+        {
+          "alias": "XLS20D Inbox Relayer",
+          "address": "0x0C8A57c77e50afC224f06CaeECa12C46178B37c7",
+          "tokenThresholds": {
+            "XRP": 100
+          }
+        }
+      ],
+      "tokens": {
+        "XRP": {
+          "assetId": 2,
+          "decimals": 6
+        },
+        "ROOT": {
+          "assetId": 1,
+          "decimals": 6
+        },
+        "ASTO": {
+          "assetId": 17508,
+          "decimals": 18
+        },
+        "SYLO": {
+          "assetId": 3172,
+          "decimals": 18
+        },
+        "ETH": {
+          "assetId": 1124,
+          "decimals": 18
+        }
+      }
+    },
+    "root": {
+      "isMainnet": true,
+      "accounts": [
+        {
+          "alias": "FP Register",
+          "address": "0xd73DcC34AE0d40990fB7C9aD5ECB0Eb5E22e58EA",
+          "tokenThresholds": {
+            "XRP": 3000
+          }
+        },
+        {
+          "alias": "Amulet Minter",
+          "address": "0xb481bb44381C36781732E63C92d16e617871E1a6",
+          "tokenThresholds": {
+            "XRP": 250
+          }
+        },
+        {
+          "alias": "GnG Minter",
+          "address": "0xD721C67A6C39172975F9Ec3F9DD1dFB90c0A0C20",
+          "tokenThresholds": {
+            "XRP": 3000
+          }
+        },
+        {
+          "alias": "EBD Inbox Relayer",
+          "address": "0x38193D74fDFD7321a4714d45ccc67F1895B9382b",
+          "tokenThresholds": {
+            "XRP": 100
+          }
+        },
+        {
+          "alias": "XBD Inbox Relayer",
+          "address": "0xc86F8Af88E22bD2d7D74Ae36BA7925f6ec0E6435",
+          "tokenThresholds": {
+            "XRP": 100
+          }
+        },
+        {
+          "alias": "FP Creator",
+          "address": "0xb2cB82436AfD5D34867af68277Ae8A268Dd09661",
+          "tokenThresholds": {
+            "XRP": 1000
+          }
+        },
+        {
+          "alias": "JEN Minter",
+          "address": "0x2F3F7cE569a30174e9FD2a36c56F0F922e3f7B4b",
+          "tokenThresholds": {
+            "XRP": 250
+          }
+        },
+        {
+          "alias": "XLS20 Relayer",
+          "address": "0x289aa9211881fac6Ea11B8253a88cad16EB6Ef61",
+          "tokenThresholds": {
+            "XRP": 250
+          }
+        }
+      ],
+      "tokens": {
+        "XRP": {
+          "assetId": 2,
+          "decimals": 6
+        },
+        "ROOT": {
+          "assetId": 1,
+          "decimals": 6
+        },
+        "ASTO": {
+          "assetId": 4196,
+          "decimals": 18
+        },
+        "SYLO": {
+          "assetId": 2148,
+          "decimals": 18
+        },
+        "ETH": {
+          "assetId": 1124,
+          "decimals": 18
+        }
+      }
+    }
+  },
+  "xrpl": {
+    "testnet": {
+      "isMainnet": false,
+      "accounts": [
+        {
+          "alias": "XBD Door Account",
+          "address": "rnZiKvrWFGi2JfHtLS8kxcqCqVhch6W5k5",
+          "tokenThresholds": {
+            "XRP": 100,
+            "524F4F5400000000000000000000000000000000": {
+              "issuer": "rPaqStERf9Te6HzbQKrcQW6bhiVRgphZsA",
+              "value": 100
+            },
+            "ZRP": {
+              "issuer": "rPaqStERf9Te6HzbQKrcQW6bhiVRgphZsA",
+              "value": 100
+            },
+            "53594C4F00000000000000000000000000000000": {
+              "issuer": "rPaqStERf9Te6HzbQKrcQW6bhiVRgphZsA",
+              "value": 100
+            },
+            "4153544F00000000000000000000000000000000": {
+              "issuer": "rPaqStERf9Te6HzbQKrcQW6bhiVRgphZsA",
+              "value": 100
+            },
+            "5553444300000000000000000000000000000000": {
+              "issuer": "rPaqStERf9Te6HzbQKrcQW6bhiVRgphZsA",
+              "value": 100
+            },
+            "5553445400000000000000000000000000000000": {
+              "issuer": "rPaqStERf9Te6HzbQKrcQW6bhiVRgphZsA",
+              "value": 100
+            }
+          }
+        },
+        {
+          "alias": "XLS20D Minter Account",
+          "address": "raawetVsPGBaLJf39HKg6gB2yhhq3NPEBG",
+          "tokenThresholds": {
+            "XRP": 250
+          }
+        }
+      ],
+      "tokens": {
+        "XRP": {},
+        "ZRP": {},
+        "524F4F5400000000000000000000000000000000": {},
+        "53594C4F00000000000000000000000000000000": {},
+        "4153544F00000000000000000000000000000000": {}
+      }
+    },
+    "livenet": {
+      "isMainnet": true,
+      "accounts": [
+        {
+          "alias": "XBD Door Account",
+          "address": "rPotpackAV39ysG1cyprYDa6ambUAPtKHk",
+          "tokenThresholds": {
+            "XRP": 1100,
+            "524F4F5400000000000000000000000000000000": {
+              "issuer": "r9MrRER8UKSAumcqvbwCAsyWbUKomz68i3",
+              "value": 100
+            },
+            "ZRP": {
+              "issuer": "rZapJ1PZ297QAEXRGu3SZkAiwXbA7BNoe",
+              "value": 2
+            },
+            "53594C4F00000000000000000000000000000000": {
+              "issuer": "rNhK8hNWEjsXvfGE4Lzso517ms6odD7dnn",
+              "value": 100
+            },
+            "4153544F00000000000000000000000000000000": {
+              "issuer": "rpFEEHBkoFwK3J9Mzi426PvTzGEMZizEh1",
+              "value": 100
+            }
+          }
+        },
+        {
+          "alias": "XLS20D FIFA Minter Account",
+          "address": "ra4JFPKcZUc6TYjt4bQ5e2WMTgjoQXaPHP",
+          "tokenThresholds": {
+            "XRP": 250
+          }
+        },
+        {
+          "alias": "XLS20D JEN Minter Account",
+          "address": "rKZ7pDMVa1bTRQrkweMQautRBNpXaQ2xCZ",
+          "tokenThresholds": {
+            "XRP": 250
+          }
+        }
+      ],
+      "tokens": {
+        "XRP": {},
+        "ZRP": {},
+        "524F4F5400000000000000000000000000000000": {},
+        "53594C4F00000000000000000000000000000000": {},
+        "4153544F00000000000000000000000000000000": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+FROM node:lts-hydrogen as base
+
+# code
+FROM base as code
+WORKDIR /code
+
+COPY package.json yarn.lock tsconfig.json tsconfig.build.json tsconfig.base.json ./
+COPY ./apps ./apps
+COPY ./packages ./packages
+COPY ./.yarn/patches ./.yarn/patches
+# configure yarn 3.3.0 and yarn install for build
+RUN yarn set version 3.3.0 &&\
+	yarn config set "nodeLinker" "node-modules" &&\
+	yarn plugin import "workspace-tools" &&\
+	yarn install --immutable &&\
+	yarn xls20d prisma:generate &&\
+	yarn xls20d build
+RUN rm -rf node_modules &&\
+	find ./apps -mindepth 1 ! -regex '^./apps/xls20d\(/.*\)?' -delete &&\
+	mv apps/xls20d/src/prisma apps/xls20d/lib/prisma &&\
+	rm -rd apps/xls20d/src &&\
+	yarn workspaces focus --all --production
+
+#production
+FROM node:hydrogen-alpine3.16
+ENV TZ utc
+
+RUN apk add --no-cache tini
+RUN mkdir -p /app && chown -R node:node /app
+WORKDIR /app
+COPY --from=code --chown=node:node /code .
+
+USER 1000
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["yarn", "call", "--help"]

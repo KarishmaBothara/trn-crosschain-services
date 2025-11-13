@@ -1,0 +1,119 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/prisma"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+
+enum TxStatus {
+  Processing
+  ProcessingFulfillOk
+  ProcessingFulfillFailed
+}
+
+enum NFTStatus {
+  ProcessingOk
+  ProcessingFailed
+  OfferCreatedForDoorAccount
+  OfferAcceptedByDoorAccount
+  OfferCreatedByDoorAccount
+  OfferAcceptedByDestAccount
+}
+
+model XRPLMintedToken {
+    id        String         @id @default(auto()) @map("_id") @db.ObjectId
+    status    TxStatus?
+    collectionId Int
+    tokenId String?
+    createdAt DateTime       @default(now())
+    updatedAt DateTime?
+    xrplHash String?
+    requestNonce String     @unique
+    tokenUri String
+    rootHash String?
+
+     @@map("XRPLMintedTokens")
+}
+
+model NftOffer {
+    id        String         @id @default(auto()) @map("_id") @db.ObjectId
+    nftId     String         @unique
+    offerId   String         @unique
+    trnAddress String
+    createdAt DateTime       @default(now())
+    updatedAt DateTime?
+    @@map("NftOffers")
+}
+
+// Incoming
+model TxDeposit {
+   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+   xrplHash    String  @unique
+   extrinsicId String?
+
+   from     String?
+   to       String?
+   amount String?
+
+   nftId    String
+   status    NFTStatus
+   createdAt DateTime @default(now())
+   updatedAt DateTime
+
+   colId       String?
+   seriesIds   Int[]
+
+   @@index([extrinsicId])
+   @@map("TxDeposits")
+}
+
+// Outgoing
+model TxWithdrawal {
+   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+   eventId      Int?
+   eventBlob    String?
+   eventSigners Json?
+
+   extrinsicId String?  @unique
+   xrplHash    String?
+
+   from     String?
+   to       String?
+
+   nftId    String
+   status    NFTStatus
+   createdAt DateTime @default(now())
+   updatedAt DateTime
+   sender    String?
+
+   @@index([xrplHash])
+   @@map("TxWithdrawals")
+}
+
+model TxSignerSetChange {
+   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+   eventId      Int    @unique
+   eventBlob    String
+   eventSigners Json
+
+   eventItemId String     @unique
+   xrplHash    String?
+
+   newSignerSet Json?
+
+   auxData   Json?
+   status    TxStatus
+   createdAt DateTime @default(now())
+   updatedAt DateTime
+
+   @@index([xrplHash])
+   @@map("TxSignerSetChanges")
+}

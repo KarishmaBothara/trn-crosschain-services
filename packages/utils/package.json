@@ -1,0 +1,22 @@
+{
+  "name": "@trncs/utils",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "yarn run -T jest -c ../../jest.config.js"
+  },
+  "dependencies": {
+    "@ethersproject/providers": "^5.7.2",
+    "@polkadot/api": "^9.9.1",
+    "@polkadot/util": "^10.1.8",
+    "axios": "1.6.8",
+    "csv-writer": "^1.6.0",
+    "csvtojson": "^2.0.10",
+    "ioredis": "^5.3.0",
+    "lodash": "4.17.21"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.3.1",
+    "@types/lodash": "^4.14.194",
+    "@types/node": "^18.11.18"
+  }
+}

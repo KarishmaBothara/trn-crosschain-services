@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  daemon-db:
+    build: ../../docker/mongodb_replica
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_REPLICA_HOST=localhost
+      - MONGO_REPLICA_PORT=27018
+    ports:
+      - "${DB_PORT}:27018"
+  redis-db:
+    image: redis:latest
+    restart: always
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+  xbd:
+    image: local/xbd
+    env_file: .env
+    environment:
+      DB_URL: mongodb://root:root@daemon-db:27017/xbd?authSource=admin&directConnection=true
+    command: ["yarn", "xbd", "call", "--help"]
+    profiles:
+      - debug

@@ -1,0 +1,33 @@
+{
+  "name": "@trncs/xls20d",
+  "main": "lib/main.js",
+  "version": "1.1.15",
+  "license": "UNLICENSED",
+  "private": true,
+  "packageManager": "yarn@3.3.0",
+  "scripts": {
+    "call": "node lib/index.js",
+    "call:main": "node lib/main.js",
+    "call:server": "fastify start lib/server.js -- --key=$KEY",
+    "call:inbox": "yarn run -T run-p \"call:main inbox processEthSide\" \"call:main inbox processRootSide\"",
+    "call:outbox": "yarn run -T run-p \"call:main outbox processRootSide\" \"call:main outbox processEthSide\"",
+    "dev": "yarn run -T run-s dev:clean dev:build",
+    "dev:clean": "rm -rdf lib",
+    "dev:build": "yarn run -T esbuild --bundle --outdir=lib --target=node18 --platform=node --external:pino --watch src/main.ts src/index.ts src/server.ts",
+    "build": "node build.mjs",
+    "prisma:generate": "yarn run -T prisma generate",
+    "prisma:pull": "yarn run -T prisma db pull",
+    "prisma:push": "yarn run -T prisma db push --skip-generate",
+    "docker:up": "docker-compose up",
+    "test": "yarn run -T jest -c ../../jest.config.js"
+  },
+  "dependencies": {
+    "@trncs/specs": "^1.0.0",
+    "@trncs/utils": "^1.0.0",
+    "xrpl": "^2.6.0"
+  },
+  "devDependencies": {
+    "@ethersproject/abi": "^5.4.7",
+    "@ethersproject/providers": "^5.4.7"
+  }
+}

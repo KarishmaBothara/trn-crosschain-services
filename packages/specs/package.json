@@ -1,0 +1,17 @@
+{
+  "name": "@trncs/specs",
+  "version": "1.0.0",
+  "scripts": {
+    "substrate:clean": "rm -rdf src/versions.jsonl",
+    "substrate:versions": "squid-substrate-metadata-explorer --chain $ROOT_WS_ENDPOINT --archive $ARCHIVE_ENDPOINT --out src/versions.jsonl",
+    "substrate:typegen": "squid-substrate-typegen typegen.json",
+    "substrate:codegen": "run-s \"substrate:clean\" \"substrate:versions\" \"substrate:typegen\""
+  },
+  "devDependencies": {
+    "@subsquid/substrate-metadata-explorer": "^1.0.6",
+    "@subsquid/substrate-typegen": "^1.4.1"
+  },
+  "dependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "outDir": "src/generated",
+  "specVersions": "src/versions.jsonl",
+  "typesBundle": "src/types.json",
+  "events": [
+    "EthBridge.EventSubmit",
+    "EthBridge.EventSend",
+    "EthBridge.Challenged",
+    "EthBridge.ProofDelayed",
+    "EthBridge.ProcessingOk",
+    "EthBridge.ProcessingFailed",
+    "NftPeg.Erc721Withdraw",
+    "Erc20Peg.Erc20Withdraw",
+    "Erc20Peg.Erc20WithdrawalDelayed",
+    "Erc20Peg.Erc20DepositDelayed",
+    "XRPLBridge.TransactionAdded",
+    "XRPLBridge.TicketSequenceThresholdReached",
+    "XRPLBridge.ProcessingOk",
+    "XRPLBridge.ProcessingFailed",
+    "XRPLBridge.WithdrawDelayed",
+    "XRPLBridge.WithdrawRequest",
+    "Xls20.Xls20MintRequest"
+  ],
+  "calls": [],
+  "storage": []
+}

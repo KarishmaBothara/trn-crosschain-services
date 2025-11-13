@@ -1,0 +1,75 @@
+name: Check | PR
+run-name: PR check workflow for non-Next.JS apps
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ["**"]
+    paths:
+      - apps/balance-checker/**
+      - apps/ebd/**
+      - apps/xbd/**
+      - apps/xls20d/**
+      - packages/**
+      - yarn.lock
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install yarn@3.3.0
+        run: |
+          corepack enable
+          corepack prepare yarn@3.3.0 --activate
+          echo "Yarn version: $(yarn --version)"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Config yarn cache
+        id: yarn-cache-dir-path
+        run: |
+          YARN_DIR=$(yarn config get cacheFolder)
+          echo "dir=${YARN_DIR}" >> $GITHUB_OUTPUT
+      - name: Setup Yarn Cache
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Run Yarn install
+        run: |
+          yarn install --immutable
+      - name: Run lint
+        run: |
+          yarn lint
+      - name: Run unit tests
+        run: |
+          yarn test
+      - name: Build `ebd`
+        run: |
+          yarn workspace @trncs/ebd prisma:generate
+          yarn workspace @trncs/ebd build
+      - name: Build `xbd`
+        run: |
+          yarn workspace @trncs/xbd prisma:generate
+          yarn workspace @trncs/xbd build
+      - name: Build `xls20d`
+        run: |
+          yarn workspace @trncs/xls20d prisma:generate
+          yarn workspace @trncs/xls20d build
+      - name: Build `balance-checker`
+        run: |
+          yarn workspace @trncs/balance-checker build

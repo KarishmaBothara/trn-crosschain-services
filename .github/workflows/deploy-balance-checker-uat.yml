@@ -1,0 +1,79 @@
+name: Deploy | Balance Checker - UAT
+run-name: Deploy to `${{ github.event.inputs.branch }}` by @${{ github.actor }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        type: choice
+        required: true
+        description: Select a Balance Checker UAT branch
+        options: ["", "uat-all/balance-checker"]
+      token:
+        type: string
+        description: Deploy token, generate one with `repo` permission
+        required: true
+      commitSHA:
+        type: string
+        required: false
+        description: "And input a valid commit SHA (40 chars string) to reset the UAT branch to \n(Optional: defaults to latest commit if empty)"
+
+jobs:
+  deploy_uat_head:
+    if: github.event.inputs.commitSHA == ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and fetch main branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{github.event.inputs.token}}
+          ref: ${{github.event.repository.default_branch}}
+      - name: Update the UAT branch using latest commit from main branch
+        run: |
+          echo "Using default branch: ${{github.event.repository.default_branch}}"
+          git fetch
+          git checkout ${{github.event.inputs.branch}}
+          git reset --hard ${{github.event.repository.default_branch}}
+          git push origin ${{github.event.inputs.branch}} --force-with-lease
+      - name: Deploy the UAT branch to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_BALCHKR}}
+          scope: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-args: '-m githubCommitRef=${{github.event.inputs.branch}}'
+          alias-domains: |
+            trn-balance-checker-uat.vercel.app
+
+  deploy_uat_sha:
+    if: github.event.inputs.commitSHA != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and fetch using provided commit SHA
+        uses: actions/checkout@v3
+        with:
+          token: ${{github.event.inputs.token}}
+          ref: ${{github.event.inputs.commitSHA}}
+      - name: Update the UAT branch using the provided commit SHA
+        run: |
+          echo "Using commit #: ${{github.event.inputs.commitSHA}}"
+          git fetch
+          git checkout ${{github.event.inputs.branch}}
+          git reset --hard ${{github.event.inputs.commitSHA}}
+          git push origin ${{github.event.inputs.branch}} --force-with-lease
+      - name: Deploy the UAT branch to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_BALCHKR}}
+          scope: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-args: '-m githubCommitRef=${{github.event.inputs.branch}} -m githubCommitSha=${{github.event.inputs.commitSHA}}'
+          alias-domains: |
+            trn-balance-checker-uat.vercel.app

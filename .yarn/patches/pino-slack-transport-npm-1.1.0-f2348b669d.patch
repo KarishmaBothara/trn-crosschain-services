@@ -1,0 +1,18 @@
+diff --git a/lib/index.js b/lib/index.js
+index 1faa3423abadbd64e90bba28c3a43ad66a93762d..3949394f9cacb48c21dd09954a726c131b4ed9b8 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -46,10 +46,11 @@ const process = ({ agent, log, options: { channelKey, colors = DEFAULT_COLORS, e
+         payload.channel = bindings[channelKey];
+     }
+     if (typeof msg === 'string') {
+-        payload.text = msg;
++        const text = msg.length <= 2500? msg : `${msg.substring(0, 2500)}...`;
++        payload.text =text;
+         payload.blocks.push({
+             type: 'section',
+-            text: { type: 'mrkdwn', text: `\`\`\`${msg}\`\`\`` }
++            text: { type: 'mrkdwn', text: `\`\`\`${text}\`\`\`` }
+         });
+     }
+     const date = new Date(time);
