@@ -16,7 +16,7 @@ on:
 
 env:
   REGISTRY: "ghcr.io"
-  IMAGE_NAME: "ghcr.io/KarishmaBothara/eth-bridge-daemon"
+  IMAGE_NAME: "ghcr.io/karishmabothara/eth-bridge-daemon"
 
 jobs:
   build-image:
