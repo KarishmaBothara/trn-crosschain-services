@@ -5,7 +5,7 @@ concurrency:
 
 on:
   push:
-    branches: ["uat-**/xbd", "prod-**/xbd"]
+    branches: ["prod-**/xbd"]
     paths:
       [
         "apps/xbd/**",
