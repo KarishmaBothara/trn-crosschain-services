@@ -1,7 +1,7 @@
 {
   "name": "@trncs/ebd",
   "main": "lib/main.js",
-  "version": "1.2.19",
+  "version": "1.2.20",
   "license": "UNLICENSED",
   "private": true,
   "packageManager": "yarn@3.3.0",
