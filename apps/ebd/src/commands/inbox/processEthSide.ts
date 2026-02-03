@@ -1,7 +1,7 @@
 import { createLogger } from "@subsquid/logger";
 import { BigNumber, Event } from "ethers";
 
-import { blockDelay, bridgeContractAddress } from "@trncs/ebd/config";
+import { blockDelay, bridgeContractAddress, ethNetwork } from "@trncs/ebd/config";
 import { handleSendMessageEvent } from "@trncs/ebd/mappings/inbox/handleSendMessageEvent";
 import { StatusCollection } from "@trncs/ebd/types";
 import {
@@ -53,9 +53,9 @@ export async function handler() {
 	);
 
 	const prismaClient = await getPrismaClient();
-
+	const serviceName = ethNetwork === "sepolia" ? 'EBD-TEST' : 'EBD';
 	await processor.run(
-		createProxyDatabase(prismaClient, StatusCollection.IbxEthStatus, "EBD"),
+		createProxyDatabase(prismaClient, StatusCollection.IbxEthStatus, serviceName),
 		async (ctx) => {
 			const { events, log, store } = ctx;
 			try {

@@ -6,7 +6,7 @@ import {
 } from "@subsquid/substrate-processor";
 import { EventItem } from "@subsquid/substrate-processor/lib/interfaces/dataSelection";
 
-import { archiveEndpoint } from "@trncs/ebd/config";
+import { archiveEndpoint, ethNetwork } from "@trncs/ebd/config";
 import { handleErc20DepositDelayed } from "@trncs/ebd/mappings/inbox/handleErc20DepositDelayed";
 import { handleEventSubmitEvent } from "@trncs/ebd/mappings/inbox/handleEventSubmitEvent";
 import { handleProcessingFailedEvent } from "@trncs/ebd/mappings/inbox/handleProcessingFailedEvent";
@@ -102,11 +102,12 @@ export async function handler() {
 		getRootApi(),
 		getPrismaClient(),
 	]);
+	const serviceName = ethNetwork === "sepolia" ? 'EBD-TEST' : 'EBD';
 
 	(processor as ReturnType<typeof createSubstrateProcessor>)
 		.setInitialBlockHeight(await fetchFinalisedHead(rootApi))
 		.run(
-			createProxyDatabase(prismaClient, StatusCollection.IbxRootStatus, "EBD"),
+			createProxyDatabase(prismaClient, StatusCollection.IbxRootStatus, serviceName),
 			async (ctx: Context) => {
 				const { blocks, _chain, log, store } = ctx;
 				const extCtx = { ...ctx, slack } as ExtContext;

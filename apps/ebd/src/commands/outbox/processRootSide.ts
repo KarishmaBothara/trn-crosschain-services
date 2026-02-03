@@ -6,7 +6,7 @@ import {
 } from "@subsquid/substrate-processor";
 import { EventItem } from "@subsquid/substrate-processor/lib/interfaces/dataSelection";
 
-import { archiveEndpoint } from "@trncs/ebd/config";
+import { archiveEndpoint, ethNetwork } from "@trncs/ebd/config";
 import { handleErc20WithdrawalDelayed } from "@trncs/ebd/mappings/outbox/handleErc20WithdrawalDelayed";
 import { handleErc721WithdrawEvent } from "@trncs/ebd/mappings/outbox/handleErc721WithdrawEvent";
 import { handleEventSendEvent } from "@trncs/ebd/mappings/outbox/handleEventSendEvent";
@@ -98,7 +98,7 @@ export type Erc20WithdrawalDelayedItem = EventItem<
 
 export async function handler() {
 	createLogger("trn").info(`channel: Outbox, network: Root`);
-
+	const serviceName = ethNetwork === "sepolia" ? 'EBD-TEST' : 'EBD';
 	const [rootApi, prismaClient] = await Promise.all([
 		getRootApi(),
 		getPrismaClient(),
@@ -106,7 +106,7 @@ export async function handler() {
 	(processor as ReturnType<typeof createSubstrateProcessor>)
 		.setInitialBlockHeight(await fetchFinalisedHead(rootApi))
 		.run(
-			createProxyDatabase(prismaClient, StatusCollection.ObxRootStatus, "EBD"),
+			createProxyDatabase(prismaClient, StatusCollection.ObxRootStatus, serviceName),
 			async (ctx: Context) => {
 				const { blocks, _chain, log, store } = ctx;
 				const extCtx = { ...ctx, slack } as ExtContext;

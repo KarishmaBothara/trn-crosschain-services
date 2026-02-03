@@ -1,7 +1,7 @@
 import { createLogger } from "@subsquid/logger";
 import { BigNumber, Event } from "ethers";
 
-import { blockDelay, bridgeContractAddress } from "@trncs/ebd/config";
+import { blockDelay, bridgeContractAddress, ethNetwork } from "@trncs/ebd/config";
 import { handleMessageReceivedEvent } from "@trncs/ebd/mappings/outbox/handleMessageReceivedEvent";
 import { StatusCollection } from "@trncs/ebd/types";
 import {
@@ -50,9 +50,10 @@ export async function handler() {
 	createLogger("eth").info(
 		`channel: Outbox, network: Ethereum, bridge: ${bridgeContractAddress}`
 	);
+	const serviceName = ethNetwork === "sepolia" ? 'EBD-TEST' : 'EBD';
 	const prismaClient = await getPrismaClient();
 	await processor.run(
-		createProxyDatabase(prismaClient, StatusCollection.ObxEthStatus, "EBD"),
+		createProxyDatabase(prismaClient, StatusCollection.ObxEthStatus, serviceName),
 		async (ctx) => {
 			const { events, log, store } = ctx;
 			try {
